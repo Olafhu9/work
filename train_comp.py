@@ -32,8 +32,10 @@ timer.Start()
 node = int(sys.argv[1]) #Node
 layer = int(sys.argv[2]) #Layer
 
-resultDir = "/home/juhee5819/T2+/result/1018_timecomp"
-trainInput = "/home/juhee5819/T2+/array/ttbb_pt30_comp.h5"
+resultDir = "/home/juhee5819/T2+/result/1102_skim/2018"
+#trainInput = "/home/juhee5819/T2+/array/ttbb_pt30_comp.h5"
+#trainInput = "/home/juhee5819/T2+/array/ttbb_2016_pt20_comp.h5"
+trainInput = "/home/juhee5819/T2+/array/ttbb_2018_4f_pt30_comp.h5"
 
 data = pd.read_hdf(trainInput)
 
@@ -63,7 +65,7 @@ ncat = catlist.str.len()
 #make the number of events uniformly
 cat_num_list = [(len(pd_train.loc[pd_train['category'] == i])) for i in range(ncat)]
 smallest = min(cat_num_list)
-#print 'number of each category = ',cat_num_list
+print 'number of each category = ',cat_num_list
 #print 'the smallest one = ', smallest
 
 pd_train_droped = pd.DataFrame()
@@ -74,7 +76,7 @@ for i in range(ncat):
 	cat_drop_indices = np.random.choice(pd_cat.index, remove_cat, replace=False)
 	pd_cat_droped = pd_cat.drop(cat_drop_indices)
 	pd_train_droped = pd_train_droped.append(pd_cat_droped)
-	#print 're pd_train_droped', len(pd_train_droped)
+	print 're pd_train_droped', len(pd_train_droped)
 
 pd_train_out  = pd_train_droped.filter(items = ['category'])
 pd_train_data = pd_train_droped.filter(items = variables)
@@ -104,7 +106,7 @@ valid_data_out = to_categorical( valid_data_out )
 import tensorflow as tf
 
 nvar = len(variables)
-dropout = 0.15
+dropout = 0.28
 
 inputs = Input(shape = (nvar,))
 x = Dense(node, activation=tf.nn.relu)(inputs)
@@ -119,7 +121,7 @@ model = Model(inputs=inputs, outputs=predictions)
 
 #modelshape = "10l_300n"
 batch_size = 256
-epochs = 1000
+epochs = 10
 model_output_name = 'model_ttbar_%de' %(epochs)
 
 model.compile(loss='categorical_crossentropy',
@@ -151,14 +153,14 @@ for i in range(ncat):
     temp = [(len(result_real.loc[result_real["pred"]==j])) for j in range(7)]
     result_array.append(temp)
     correct = correct + temp[i]
-    #print temp, len(result_real), temp[i]
+    print temp, len(result_real), temp[i]
 
 result_array_prob = []
 for i in range(ncat):
     result_real = result.loc[result['real']==i]
     temp = [(len(result_real.loc[result_real["pred"]==j])) / len(result_real) for j in range(7)]
     result_array_prob.append(temp)
-#    print temp, len(result_real), temp[i]
+    print temp, len(result_real), temp[i]
 #print result_array_prob
 
 #print result_array
@@ -176,7 +178,7 @@ bg_events = sum(result_array[6])
 recoeff = correct_sig/(len(valid_data)-bg_events)*100
 print 'reco eff = ', correct_sig/(len(valid_data)-bg_events)*100
 
-with open("result_1018_time.txt", "a") as f_log:
+with open("result_2018skim.txt", "a") as f_log:
 	print 'writing results...'
 	f_log.write("\ntrainInput "+trainInput+'\n')
 	f_log.write('Nodes: '+str(node)+'   Layers: '+str(layer)+'\nEpochs '+str(epochs)+'\n'+'Dropout: '+str(dropout)+'\n')
@@ -201,7 +203,8 @@ plt.xlabel('Epochs')
 plt.legend(['Train','Test'],loc='upper right')
 #plt.savefig(os.path.join('fig_score_loss.pdf'))
 
-plt.savefig(os.path.join(resultDir,'Loss_pt30_comp_N'+str(node)+'L'+str(layer)+'E'+str(epochs)+'D'+str(dropout)+'.pdf'))
+#plt.savefig(os.path.join(resultDir,'Loss_pt20_comp_N'+str(node)+'L'+str(layer)+'E'+str(epochs)+'D'+str(dropout)+'.pdf'))
+#plt.savefig(os.path.join(resultDir,'Loss_pt30_comp_N'+str(node)+'L'+str(layer)+'E'+str(epochs)+'D'+str(dropout)+'.pdf'))
 plt.gcf().clear()
 
 #Heatmap
@@ -212,7 +215,8 @@ heatmap = sns.heatmap(result_array_prob, annot=True, cmap='YlGnBu', fmt='.1%', a
 plt.xlabel('pred.', fontsize=12)
 plt.ylabel('real', fontsize=12)
 heatmap.set_yticklabels(heatmap.get_yticklabels(), rotation=0)
-plt.savefig(os.path.join(resultDir, 'HM_pt30_comp_N'+str(node)+'L'+str(layer)+'E'+str(epochs)+'D'+str(dropout)+'.pdf'))
+#plt.savefig(os.path.join(resultDir, 'HM_pt20_comp_N'+str(node)+'L'+str(layer)+'E'+str(epochs)+'D'+str(dropout)+'.pdf'))
+#plt.savefig(os.path.join(resultDir, 'HM_pt30_comp_N'+str(node)+'L'+str(layer)+'E'+str(epochs)+'D'+str(dropout)+'.pdf'))
 plt.gcf().clear()
 
 #timer.Stop()

@@ -32,15 +32,17 @@ layer = int(sys.argv[2]) #Layer
 epochs = int(sys.argv[3]) #Epoch
 dropout = float(sys.argv[4]) #Dropout
 
-resultDir = "/home/juhee5819/T2+/result/1018_N70L2"
-trainInput = "/home/juhee5819/T2+/array/ttbb_pt30_comp.h5"
+resultDir = "/home/juhee5819/T2+/result/1115_weight/total"
+trainInput = "/home/juhee5819/T2+/array/ttbb_2018_4f_pt20_comp.h5"
 
 data = pd.read_hdf(trainInput)
+
+# remove background event (cat 6)
+#data = data.drop(data[data['category'] == 6].index)
 
 # pickup only interesting variables
 
 variables = ["nbjets_m", "lepton_pt", "lepton_eta", "lepton_e", "MET", "MET_phi", "jet1_pt", "jet1_eta", "jet1_e", "jet1_m", "jet1_btag", "jet2_pt", "jet2_eta", "jet2_e", "jet2_m", "jet2_btag", "jet3_pt", "jet3_eta", "jet3_e", "jet3_m", "jet3_btag", "jet4_pt", "jet4_eta", "jet4_e", "jet4_m", "jet4_btag", "dR12", "dR13", "dR14", "dR23", "dR24", "dR34", "dRlep1", "dRlep2", "dRlep3", "dRlep4", "dRnu1", "dRnu2", "dRnu3", "dRnu4", "dRnulep1", "dRnulep2", "dRnulep3", "dRnulep4", "dRnulep12", "dRnulep13", "dRnulep14", "dRnulep23", "dRnulep24", "dRnulep34", "dEta12", "dEta13", "dEta14", "dEta23", "dEta24", "dEta34", "dPhi12", "dPhi13", "dPhi14", "dPhi23", "dPhi24", "dPhi34", "invm12", "invm13", "invm14", "invm23", "invm24", "invm34", "invmlep1", "invmlep2", "invmlep3", "invmlep4", "invmnu1", "invmnu2", "invmnu3", "invmnu4"]
-#variables = ["nbjets_m", "lepton_pt", "lepton_eta", "lepton_e", "MET", "MET_phi", "jet1_pt", "jet1_eta", "jet1_e", "jet1_m", "jet1_btag", "jet2_pt", "jet2_eta", "jet2_e", "jet2_m", "jet2_btag", "jet3_pt", "jet3_eta", "jet3_e", "jet3_m", "jet3_btag", "jet4_pt", "jet4_eta", "jet4_e", "jet4_m", "jet4_btag", "dR12", "dR13", "dR14", "dR23", "dR24", "dR34", "dRlep1", "dRlep2", "dRlep3", "dRlep4", "dRnu1", "dRnu2", "dRnu3", "dRnu4", "dRnulep1", "dRnulep2", "dRnulep3", "dRnulep4", "dRnulep12", "dRnulep13", "dRnulep14", "dRnulep23", "dRnulep24", "dRnulep34", "dEta12", "dEta13", "dEta14", "dEta23", "dEta24", "dEta34", "dPhi12", "dPhi13", "dPhi14", "dPhi23", "dPhi24", "dPhi34", "invm12", "invm13", "invm14", "invm23", "invm24", "invm34", "invmlep1", "invmlep2", "invmlep3", "invmlep4", "invmnu1", "invmnu2", "invmnu3", "invmnu4", "jet1_CvsB", "jet1_CvsL", "jet2_CvsB", "jet2_CvsL", "jet3_CvsB", "jet3_CvsL", "jet4_CvsB", "jet4_CvsL"]
 
 numbertr=len(data)
 
@@ -56,6 +58,7 @@ pd_valid_data = pd_valid.filter(items = variables)
 
 catlist = pd_valid_out.apply(set)
 ncat = catlist.str.len() 
+print 'ncat ', ncat
 
 #print 'train data not droped: ',  len(pd_train)
 #print 'valid data: ', len(pd_valid)
@@ -63,8 +66,8 @@ ncat = catlist.str.len()
 #make the number of events uniformly
 cat_num_list = [(len(pd_train.loc[pd_train['category'] == i])) for i in range(ncat)]
 smallest = min(cat_num_list)
-#print 'number of each category = ',cat_num_list
-#print 'the smallest one = ', smallest
+print 'number of each category = ',cat_num_list
+print 'the smallest one = ', smallest
 
 pd_train_droped = pd.DataFrame()
 np.random.seed(10)
@@ -76,8 +79,13 @@ for i in range(ncat):
 	pd_train_droped = pd_train_droped.append(pd_cat_droped)
 	#print 're pd_train_droped', len(pd_train_droped)
 
-pd_train_out  = pd_train_droped.filter(items = ['category'])
-pd_train_data = pd_train_droped.filter(items = variables)
+# droped data
+#pd_train_out  = pd_train_droped.filter(items = ['category'])
+#pd_train_data = pd_train_droped.filter(items = variables)
+
+# not droped data
+pd_train_out = pd_train.filter(items = ['category'])
+pd_train_data = pd_train.filter(items = variables)
 
 #covert from pandas to array
 train_data_out = np.array( pd_train_out )
@@ -110,7 +118,7 @@ inputs = Input(shape = (nvar,))
 x = Dense(node, activation=tf.nn.relu)(inputs)
 x = Dropout(dropout)(x)
 
-for i in range(layer-1):
+for i in range(layer):
 	x = Dense(node, activation=tf.nn.relu)(x)
 	x = Dropout(dropout)(x)
 
@@ -118,14 +126,14 @@ predictions = Dense(int(ncat), activation=tf.nn.softmax)(x)
 model = Model(inputs=inputs, outputs=predictions)
 
 #modelshape = "10l_300n"
-batch_size = 256
-#epochs = 500
+batch_size = 512
 model_output_name = 'model_ttbar_%de' %(epochs)
 
 model.compile(loss='categorical_crossentropy',
               optimizer = 'adam',
               metrics=['accuracy', 'categorical_accuracy'])
-hist = model.fit(train_data, train_data_out, batch_size=batch_size, epochs=epochs, validation_data=(valid_data,valid_data_out))
+hist = model.fit(train_data, train_data_out, batch_size=batch_size, epochs=epochs, validation_data=(valid_data,valid_data_out), class_weight = {0:2.02, 1:2.2, 2:3.54, 3:2.01, 4:3.24, 5:3.53, 6:1})
+#hist = model.fit(train_data, train_data_out, batch_size=batch_size, epochs=epochs, validation_data=(valid_data,valid_data_out))
 
 model.summary()
 
@@ -147,7 +155,7 @@ correct = 0
 
 for i in range(ncat):
     result_real = result.loc[result['real']==i]
-    temp = [(len(result_real.loc[result_real["pred"]==j])) for j in range(7)]
+    temp = [(len(result_real.loc[result_real["pred"]==j])) for j in range(ncat)]
     result_array.append(temp)
     correct = correct + temp[i]
     print temp, len(result_real), temp[i]
@@ -155,36 +163,42 @@ for i in range(ncat):
 result_array_prob = []
 for i in range(ncat):
     result_real = result.loc[result['real']==i]
-    temp = [(len(result_real.loc[result_real["pred"]==j])) / len(result_real) for j in range(7)]
+    temp = [(len(result_real.loc[result_real["pred"]==j])) / len(result_real) for j in range(ncat)]
     result_array_prob.append(temp)
-#    print temp, len(result_real), temp[i]
+    print temp, len(result_real), temp[i]
 #print result_array_prob
 
 #print result_array
 #reconstruction efficiency
 print 'calculate reco eff...'
 correct_bg = result_array[6][6]
-print 'correct = ', correct
-print 'correct_bg = ', correct_bg
 correct_sig = correct - correct_bg
-bg_events = sum(result_array[6])
+bg_event = sum(result_array[6])
+signal_event = len(valid_data) - bg_event
+print 'correct_sig = ', correct_sig
+print 'bg_event = ', bg_event
+print 'signal event = ', signal_event
 
-print 'correct_sig = correct - correct_bg',  correct_sig
-print 'bg_events = ', bg_events
 
 print len(valid_data), 'correct = ', correct
-print 'correct_sig = ', correct_sig
-recoeff = correct_sig/(len(valid_data)-bg_events)*100
-print 'reco eff = ', correct_sig/(len(valid_data)-bg_events)*100
+#recoeff = correct/(len(valid_data))*100
+recoeff = correct_sig/signal_event*100
+tot_eff = correct/(len(valid_data))*100
+print 'reco eff = ', recoeff 
+print 'tot eff = ', tot_eff
 
-with open("result_1018_N70L2.txt", "a") as f_log:
+with open("result_1115_weight.txt", "a") as f_log:
 	print 'writing results...'
 	f_log.write("\ntrainInput "+trainInput+'\n')
 	f_log.write('Nodes: '+str(node)+'   Layers: '+str(layer)+'\nEpochs '+str(epochs)+'\nDropout '+str(dropout)+'\n')
 	f_log.write('nvar: '+str(nvar)+'\n')
-	f_log.write('reco eff: '+str(correct_sig)+' / '+str(len(valid_data)-bg_events)+' = '+str(recoeff)+'\n')
+	#f_log.write('reco eff: '+str(correct)+' / '+str(len(valid_data))+' = '+str(recoeff)+'\n')
+	f_log.write('reco eff: '+str(correct_sig)+' / '+str(signal_event)+' = '+str(recoeff)+'\n')
 	f_log.write('training samples '+str(len(pd_train_out))+'   validation samples '+str(len(pd_valid))+'\n')
+	f_log.write('the number of each category '+str(cat_num_list)+'\n')
 	f_log.write('reco eff: '+str(recoeff)+'\n')
+	f_log.write('tot eff: '+str(tot_eff)+'\n')
+	#f_log.write('class_weight: '+class_weight+'\n')
  
 print("Plotting scores")
 plt.plot(hist.history['categorical_accuracy'])
@@ -201,7 +215,7 @@ plt.plot(hist.history['val_loss'])
 plt.ylabel('Loss')
 plt.xlabel('Epochs')
 plt.legend(['Train','Test'],loc='upper right')
-plt.savefig(os.path.join(resultDir,'Loss_pt30_comp_N'+str(node)+'L'+str(layer)+'E'+str(epochs)+'D'+str(dropout)+'.pdf'))
+plt.savefig(os.path.join(resultDir,'Loss_pt20_exweight_N'+str(node)+'L'+str(layer)+'E'+str(epochs)+'D'+str(dropout)+'.pdf'))
 plt.gcf().clear()
 
 #Heatmap
@@ -212,7 +226,7 @@ heatmap = sns.heatmap(result_array_prob, annot=True, cmap='YlGnBu', fmt='.1%', a
 plt.xlabel('pred.', fontsize=12)
 plt.ylabel('real', fontsize=12)
 heatmap.set_yticklabels(heatmap.get_yticklabels(), rotation=0)
-plt.savefig(os.path.join(resultDir, 'HM_pt30_comp_N'+str(node)+'L'+str(layer)+'E'+str(epochs)+'D'+str(dropout)+'.pdf'))
+plt.savefig(os.path.join(resultDir, 'HM_pt20_exweight_N'+str(node)+'L'+str(layer)+'E'+str(epochs)+'D'+str(dropout)+'.pdf'))
 plt.gcf().clear()
 
 #timer.Stop()

@@ -1,141 +1,55 @@
-python train_comp.py 20 1
-python train_comp.py 20 2 
-python train_comp.py 20 3
-python train_comp.py 20 4 
-python train_comp.py 20 5 
-python train_comp.py 20 6 
-python train_comp.py 20 7 
-python train_comp.py 20 8 
-python train_comp.py 20 9 
-python train_comp.py 20 10 
+python train_sig_nled.py 10 1 50 0.1
+python train_sig_nled.py 10 2  50 0.1
+python train_sig_nled.py 10 3 50 0.1
+python train_sig_nled.py 10 4  50 0.1
+python train_sig_nled.py 10 5  50 0.1
+python train_sig_nled.py 10 6  50 0.1
+python train_sig_nled.py 10 7  50 0.1
+python train_sig_nled.py 10 8  50 0.1
+python train_sig_nled.py 10 9  50 0.1
+python train_sig_nled.py 10 10  50 0.1
 
-python train_comp.py 30 1 
-python train_comp.py 30 2 
-python train_comp.py 30 3
-python train_comp.py 30 4 
-python train_comp.py 30 5 
-python train_comp.py 30 6 
-python train_comp.py 30 7 
-python train_comp.py 30 8 
-python train_comp.py 30 9 
-python train_comp.py 30 10 
+python train_sig_nled.py 20 1  50 0.1
+python train_sig_nled.py 20 2  50 0.1
+python train_sig_nled.py 20 3 50 0.1
+python train_sig_nled.py 20 4  50 0.1
+python train_sig_nled.py 20 5  50 0.1
+python train_sig_nled.py 20 6  50 0.1
+python train_sig_nled.py 20 7  50 0.1
+python train_sig_nled.py 20 8  50 0.1
+python train_sig_nled.py 20 9  50 0.1
+python train_sig_nled.py 20 10  50 0.1
 
-python train_comp.py 40 1 
-python train_comp.py 40 2 
-python train_comp.py 40 3
-python train_comp.py 40 4 
-python train_comp.py 40 5 
-python train_comp.py 40 6 
-python train_comp.py 40 7 
-python train_comp.py 40 8 
-python train_comp.py 40 9 
-python train_comp.py 40 10 
+python train_sig_nled.py 30 1  50 0.1
+python train_sig_nled.py 30 2  50 0.1
+python train_sig_nled.py 30 3 50 0.1
+python train_sig_nled.py 30 4  50 0.1
+python train_sig_nled.py 30 5  50 0.1
+python train_sig_nled.py 30 6  50 0.1
+python train_sig_nled.py 30 7  50 0.1
+python train_sig_nled.py 30 8  50 0.1
+python train_sig_nled.py 30 9  50 0.1
+python train_sig_nled.py 30 10  50 0.1
 
-python train_comp.py 50 1 
-python train_comp.py 50 2 
-python train_comp.py 50 3
-python train_comp.py 50 4 
-python train_comp.py 50 5 
-python train_comp.py 50 6 
-python train_comp.py 50 7 
-python train_comp.py 50 8 
-python train_comp.py 50 9 
-python train_comp.py 50 10 
+python train_sig_nled.py 40 1  50 0.1
+python train_sig_nled.py 40 2  50 0.1
+python train_sig_nled.py 40 3 50 0.1
+python train_sig_nled.py 40 4  50 0.1
+python train_sig_nled.py 40 5  50 0.1
+python train_sig_nled.py 40 6  50 0.1
+python train_sig_nled.py 40 7  50 0.1
+python train_sig_nled.py 40 8  50 0.1
+python train_sig_nled.py 40 9  50 0.1
+python train_sig_nled.py 40 10  50 0.1
 
-python train_comp.py 60 1
-python train_comp.py 60 2 
-python train_comp.py 60 3
-python train_comp.py 60 4 
-python train_comp.py 60 5 
-python train_comp.py 60 6 
-python train_comp.py 60 7 
-python train_comp.py 60 8 
-python train_comp.py 60 9 
-python train_comp.py 60 10 
-
-python train_comp.py 70 1
-python train_comp.py 70 2 
-python train_comp.py 70 3
-python train_comp.py 70 4 
-python train_comp.py 70 5 
-python train_comp.py 70 6 
-python train_comp.py 70 7 
-python train_comp.py 70 8 
-python train_comp.py 70 9 
-python train_comp.py 70 10 
-
-python train_comp.py 80 1
-python train_comp.py 80 2 
-python train_comp.py 80 3
-python train_comp.py 80 4 
-python train_comp.py 80 5 
-python train_comp.py 80 6 
-python train_comp.py 80 7 
-python train_comp.py 80 8 
-python train_comp.py 80 9 
-
-python train_comp.py 90 1
-python train_comp.py 90 2 
-python train_comp.py 90 3
-python train_comp.py 90 4 
-python train_comp.py 90 5 
-python train_comp.py 90 6 
-python train_comp.py 90 7 
-python train_comp.py 90 8 
-python train_comp.py 90 9 
-
-python train_comp.py 100 1
-python train_comp.py 100 2 
-python train_comp.py 100 3
-python train_comp.py 100 4 
-python train_comp.py 100 5 
-python train_comp.py 100 6 
-python train_comp.py 100 7 
-python train_comp.py 100 8 
-python train_comp.py 100 9 
-python train_comp.py 100 10 
-
-python train_comp.py 150 1
-python train_comp.py 150 2 
-python train_comp.py 150 3
-python train_comp.py 150 4 
-python train_comp.py 150 5 
-python train_comp.py 150 6 
-python train_comp.py 150 7 
-python train_comp.py 150 8 
-python train_comp.py 150 9 
-python train_comp.py 150 10 
-
-python train_comp.py 200 1
-python train_comp.py 200 2 
-python train_comp.py 200 3
-python train_comp.py 200 4 
-python train_comp.py 200 5 
-python train_comp.py 200 6 
-python train_comp.py 200 7 
-python train_comp.py 200 8 
-python train_comp.py 200 9 
-python train_comp.py 200 10 
-
-python train_comp.py 250 1
-python train_comp.py 250 2 
-python train_comp.py 250 3
-python train_comp.py 250 4 
-python train_comp.py 250 5 
-python train_comp.py 250 6 
-python train_comp.py 250 7 
-python train_comp.py 250 8 
-python train_comp.py 250 9 
-python train_comp.py 250 10 
-
-python train_comp.py 300 1
-python train_comp.py 300 2 
-python train_comp.py 300 3
-python train_comp.py 300 4 
-python train_comp.py 300 5 
-python train_comp.py 300 6 
-python train_comp.py 300 7 
-python train_comp.py 300 8 
-python train_comp.py 300 9 
-python train_comp.py 300 10 
+python train_sig_nled.py 50 1  50 0.1
+python train_sig_nled.py 50 2  50 0.1
+python train_sig_nled.py 50 3 50 0.1
+python train_sig_nled.py 50 4  50 0.1
+python train_sig_nled.py 50 5  50 0.1
+python train_sig_nled.py 50 6  50 0.1
+python train_sig_nled.py 50 7  50 0.1
+python train_sig_nled.py 50 8  50 0.1
+python train_sig_nled.py 50 9  50 0.1
+python train_sig_nled.py 50 10  50 0.1
 
