@@ -36,7 +36,7 @@ layer = int(sys.argv[2]) #Layer
 epochs = int(sys.argv[3]) #Epoch
 dropout = float(sys.argv[4]) #Dropout
 
-resultTxt = "result_1122_4j_gloweight.txt"
+resultTxt = "result_1123_4j.txt"
 resultDir = "/home/juhee5819/T2+/result/1122_4j/sig"
 trainInput = "/home/juhee5819/T2+/array/ttbb_2018_4f_pt20_global.h5"
 
@@ -46,10 +46,10 @@ data = pd.read_hdf(trainInput)
 data = data.drop(data[data['category'] == 6].index)
 
 # jet by jet variables
-#variables = ["nbjets_m", "lepton_pt", "lepton_eta", "lepton_e", "MET", "MET_phi", "jet1_pt", "jet1_eta", "jet1_e", "jet1_m", "jet1_btag", "jet2_pt", "jet2_eta", "jet2_e", "jet2_m", "jet2_btag", "jet3_pt", "jet3_eta", "jet3_e", "jet3_m", "jet3_btag", "jet4_pt", "jet4_eta", "jet4_e", "jet4_m", "jet4_btag", "dR12", "dR13", "dR14", "dR23", "dR24", "dR34", "dRlep1", "dRlep2", "dRlep3", "dRlep4", "dRnu1", "dRnu2", "dRnu3", "dRnu4", "dRnulep1", "dRnulep2", "dRnulep3", "dRnulep4", "dRnulep12", "dRnulep13", "dRnulep14", "dRnulep23", "dRnulep24", "dRnulep34", "dEta12", "dEta13", "dEta14", "dEta23", "dEta24", "dEta34", "dPhi12", "dPhi13", "dPhi14", "dPhi23", "dPhi24", "dPhi34", "invm12", "invm13", "invm14", "invm23", "invm24", "invm34", "invmlep1", "invmlep2", "invmlep3", "invmlep4", "invmnu1", "invmnu2", "invmnu3", "invmnu4"]
+variables = ["nbjets_m", "lepton_pt", "lepton_eta", "lepton_e", "MET", "MET_phi", "jet1_pt", "jet1_eta", "jet1_e", "jet1_m", "jet1_btag", "jet2_pt", "jet2_eta", "jet2_e", "jet2_m", "jet2_btag", "jet3_pt", "jet3_eta", "jet3_e", "jet3_m", "jet3_btag", "jet4_pt", "jet4_eta", "jet4_e", "jet4_m", "jet4_btag", "dR12", "dR13", "dR14", "dR23", "dR24", "dR34", "dRlep1", "dRlep2", "dRlep3", "dRlep4", "dRnu1", "dRnu2", "dRnu3", "dRnu4", "dRnulep1", "dRnulep2", "dRnulep3", "dRnulep4", "dRnulep12", "dRnulep13", "dRnulep14", "dRnulep23", "dRnulep24", "dRnulep34", "dEta12", "dEta13", "dEta14", "dEta23", "dEta24", "dEta34", "dPhi12", "dPhi13", "dPhi14", "dPhi23", "dPhi24", "dPhi34", "invm12", "invm13", "invm14", "invm23", "invm24", "invm34", "invmlep1", "invmlep2", "invmlep3", "invmlep4", "invmnu1", "invmnu2", "invmnu3", "invmnu4"]
 
 # global + jet by jet variables
-variables = ["nulep_pt", "ngoodjets", "St", "Ht", "nbjets_m", "lepton_pt", "lepton_eta", "lepton_e", "MET", "MET_phi", "jet1_pt", "jet1_eta", "jet1_e", "jet1_m", "jet1_btag", "jet2_pt", "jet2_eta", "jet2_e", "jet2_m", "jet2_btag", "jet3_pt", "jet3_eta", "jet3_e", "jet3_m", "jet3_btag", "jet4_pt", "jet4_eta", "jet4_e", "jet4_m", "jet4_btag", "dR12", "dR13", "dR14", "dR23", "dR24", "dR34", "dRlep1", "dRlep2", "dRlep3", "dRlep4", "dRnu1", "dRnu2", "dRnu3", "dRnu4", "dRnulep1", "dRnulep2", "dRnulep3", "dRnulep4", "dRnulep12", "dRnulep13", "dRnulep14", "dRnulep23", "dRnulep24", "dRnulep34", "dEta12", "dEta13", "dEta14", "dEta23", "dEta24", "dEta34", "dPhi12", "dPhi13", "dPhi14", "dPhi23", "dPhi24", "dPhi34", "invm12", "invm13", "invm14", "invm23", "invm24", "invm34", "invmlep1", "invmlep2", "invmlep3", "invmlep4", "invmnu1", "invmnu2", "invmnu3", "invmnu4"]
+#variables = ["nulep_pt", "ngoodjets", "St", "Ht", "nbjets_m", "lepton_pt", "lepton_eta", "lepton_e", "MET", "MET_phi", "jet1_pt", "jet1_eta", "jet1_e", "jet1_m", "jet1_btag", "jet2_pt", "jet2_eta", "jet2_e", "jet2_m", "jet2_btag", "jet3_pt", "jet3_eta", "jet3_e", "jet3_m", "jet3_btag", "jet4_pt", "jet4_eta", "jet4_e", "jet4_m", "jet4_btag", "dR12", "dR13", "dR14", "dR23", "dR24", "dR34", "dRlep1", "dRlep2", "dRlep3", "dRlep4", "dRnu1", "dRnu2", "dRnu3", "dRnu4", "dRnulep1", "dRnulep2", "dRnulep3", "dRnulep4", "dRnulep12", "dRnulep13", "dRnulep14", "dRnulep23", "dRnulep24", "dRnulep34", "dEta12", "dEta13", "dEta14", "dEta23", "dEta24", "dEta34", "dPhi12", "dPhi13", "dPhi14", "dPhi23", "dPhi24", "dPhi34", "invm12", "invm13", "invm14", "invm23", "invm24", "invm34", "invmlep1", "invmlep2", "invmlep3", "invmlep4", "invmnu1", "invmnu2", "invmnu3", "invmnu4"]
 
 numbertr=len(data)
 
@@ -147,6 +147,7 @@ batch_size = 1024
 model_output_name = 'model_ttbar_%de' %(epochs)
 
 model.compile(loss=weighted_categorical_crossentropy(classweight),
+#model.compile(loss='categorical_crossentropy',
               optimizer = 'adam',
               metrics=['accuracy', 'categorical_accuracy'])
 #hist = model.fit(train_data1, train_data_out, batch_size=batch_size, epochs=epochs, validation_data=(valid_data,valid_data_out))
@@ -160,8 +161,18 @@ ctime = timer.CpuTime(); # CPU time
 print("RealTime={0:6.2f} seconds, CpuTime={1:6.2f} seconds").format(rtime,ctime)
 
 pred = model.predict(valid_data)
+
+
+print 'pred 1'
+print pred
+
 pred = np.argmax(pred, axis=1)
+print 'pred 2' 
+print pred
 comp = np.argmax(valid_data_out, axis=1)
+
+
+print "comp" , comp
 
 print len(valid_data)
 
@@ -221,7 +232,7 @@ plt.plot(hist.history['val_loss'])
 plt.ylabel('Loss')
 plt.xlabel('Epochs')
 plt.legend(['Train','Test'],loc='upper right')
-plt.savefig(os.path.join(resultDir,'Loss_pt20_global_N'+str(node)+'L'+str(layer)+'E'+str(epochs)+'D'+str(dropout)+'.pdf'))
+plt.savefig(os.path.join(resultDir,'Loss_pt20_weight_N'+str(node)+'L'+str(layer)+'E'+str(epochs)+'D'+str(dropout)+'.pdf'))
 plt.gcf().clear()
 
 #Heatmap
@@ -232,7 +243,7 @@ heatmap = sns.heatmap(result_array_prob, annot=True, cmap='YlGnBu', fmt='.1%', a
 plt.xlabel('pred.', fontsize=12)
 plt.ylabel('real', fontsize=12)
 heatmap.set_yticklabels(heatmap.get_yticklabels(), rotation=0)
-plt.savefig(os.path.join(resultDir, 'HM_pt20_global_N'+str(node)+'L'+str(layer)+'E'+str(epochs)+'D'+str(dropout)+'.pdf'))
+plt.savefig(os.path.join(resultDir, 'HM_pt20_weight_N'+str(node)+'L'+str(layer)+'E'+str(epochs)+'D'+str(dropout)+'.pdf'))
 plt.gcf().clear()
 
 #timer.Stop()
