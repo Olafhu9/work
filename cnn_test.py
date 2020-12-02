@@ -38,6 +38,9 @@ num_data = len( data )
 var_event = ['nbjets_m', 'ngoodjets', 'St', 'Ht']
 # jet variables
 var_jet = ["jet1_pt", "jet1_eta", "jet1_e", "jet1_m", "jet1_btag", "jet2_pt", "jet2_eta", "jet2_e", "jet2_m", "jet2_btag", "jet3_pt", "jet3_eta", "jet3_e", "jet3_m", "jet3_btag", "jet4_pt", "jet4_eta", "jet4_e", "jet4_m", "jet4_btag", "dR12", "dR13", "dR14", "dR23", "dR24", "dR34", "dRlep1", "dRlep2", "dRlep3", "dRlep4", "dRnu1", "dRnu2", "dRnu3", "dRnu4", "dRnulep1", "dRnulep2", "dRnulep3", "dRnulep4", "dRnulep12", "dRnulep13", "dRnulep14", "dRnulep23", "dRnulep24", "dRnulep34", "dEta12", "dEta13", "dEta14", "dEta23", "dEta24", "dEta34", "dPhi12", "dPhi13", "dPhi14", "dPhi23", "dPhi24", "dPhi34", "invm12", "invm13", "invm14", "invm23", "invm24", "invm34", "invmlep1", "invmlep2", "invmlep3", "invmlep4", "invmnu1", "invmnu2", "invmnu3", "invmnu4"]
+var_jet = ["jet1_pt", "jet1_eta", "jet1_e", "jet1_m", "jet1_btag", "jet1_CvsB", "jet1_CvsL", "dRlep1", "dRnu1", "dRnulep1", "jet2_pt", "jet2_eta", "jet2_e", "jet2_m", "jet2_btag", "jet2_CvsB", "jet2_CvsL", "dRlep2", "dRnu2", "dRnulep2", "jet3_pt", "jet3_eta", "jet3_e", "jet3_m", "jet3_btag", "jet3_CvsB", "jet3_CvsL", "dRlep3", "dRnu3", "dRnulep3", "jet4_pt", "jet4_eta", "jet4_e", "jet4_m", "jet4_btag", "jet4_CvsB", "jet4_CvsL", "dRlep4", "dRnu4", "dRnulep4"]
+
+#"jet2_pt", "jet2_eta", "jet2_e", "jet2_m", "jet2_btag", "jet3_pt", "jet3_eta", "jet3_e", "jet3_m", "jet3_btag", "jet4_pt", "jet4_eta", "jet4_e", "jet4_m", "jet4_btag", "dR12", "dR13", "dR14", "dR23", "dR24", "dR34", "dRlep1", "dRlep2", "dRlep3", "dRlep4", "dRnu1", "dRnu2", "dRnu3", "dRnu4", "dRnulep1", "dRnulep2", "dRnulep3", "dRnulep4", "dRnulep12", "dRnulep13", "dRnulep14", "dRnulep23", "dRnulep24", "dRnulep34", "dEta12", "dEta13", "dEta14", "dEta23", "dEta24", "dEta34", "dPhi12", "dPhi13", "dPhi14", "dPhi23", "dPhi24", "dPhi34", "invm12", "invm13", "invm14", "invm23", "invm24", "invm34", "invmlep1", "invmlep2", "invmlep3", "invmlep4", "invmnu1", "invmnu2", "invmnu3", "invmnu4"]
 # lepton, MET variables
 var_lepton = ["lepton_pt", "lepton_eta", "lepton_e", "MET", "MET_phi"]
 
@@ -105,6 +108,7 @@ leptons = LSTM(25, go_backwards=True, implementation=2, name='leptons_lstm', ret
 # Concatenate
 x = Concatenate()( [event_info, jets, leptons] )
 x = Dense(50, activation='relu',kernel_initializer='lecun_uniform')(x)
+x = Dropout(0.08)(x)
 
 n_cat = 6
 
@@ -127,17 +131,17 @@ result = pd.DataFrame({"real":comp, "pred":pred})
 result_array = []
 correct = 0
 
-for i in range(numcat):
+for i in range(n_cat):
     result_real = result.loc[result['real']==i]
-    temp = [(len(result_real.loc[result_real["pred"]==j])) for j in range(numcat)]
+    temp = [(len(result_real.loc[result_real["pred"]==j])) for j in range(n_cat)]
     result_array.append(temp)
     correct = correct + temp[i]
     print temp, len(result_real), temp[i]
 
 result_array_prob = []
-for i in range(numcat):
+for i in range(n_cat):
     result_real = result.loc[result['real']==i]
-    temp = [(len(result_real.loc[result_real["pred"]==j])) / len(result_real) for j in range(numcat)]
+    temp = [(len(result_real.loc[result_real["pred"]==j])) / len(result_real) for j in range(n_cat)]
     result_array_prob.append(temp)
     print temp, len(result_real), temp[i]
 
