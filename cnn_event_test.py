@@ -94,34 +94,34 @@ valid_lepton_input = valid_lepton_input.reshape( valid_lepton_input.shape[0], 1,
 #
 #valid_data_out = valid_data_out.reshape( valid_data_out.shape[0], valid_data_out.shape[1], 1)
 #valid_event_input = valid_event_input.reshape( valid_event_input.shape[0], valid_event_input.shape[1], 1)
-##d event variableivalid_jet_input = valid_jet_input.reshape( valid_jet_input.shape[0], valid_jet_input.shape[1], 1)
+#valid_jet_input = valid_jet_input.reshape( valid_jet_input.shape[0], valid_jet_input.shape[1], 1)
 #valid_lepton_input = valid_lepton_input.reshape( valid_lepton_input.shape[0], valid_lepton_input.shape[1], 1)
 # Inputs
 Input_event = Input( shape = (train_event_input.shape[1], train_event_input.shape[2]) )
 Input_jet = Input( shape = (train_jet_input.shape[1], train_jet_input.shape[2]) )
-#Input_jet = Input( shape = (train_jet_input.shape[1], train_jet_input.shape[2], 1) )
 Input_lepton = Input( shape = (train_lepton_input.shape[1], train_lepton_input.shape[2]) )
 
 #Input_event = Input( shape = (train_event_input.shape[1], train_event_input.shape[2], 1) )
 #Input_jet = Input( shape = (train_jet_input.shape[1], train_jet_input.shape[2], 1 ))
-#Input_lepton = Input( shape = (train_lepton_inpuhape( valid_jet_input.shape[0],.shape[1], train_lepton_input.shape[2], 1 ))
+#Input_lepton = Input( shape = (train_lepton_input.shape[1], train_lepton_input.shape[2], 1 ))
 
 # BatchNormalization
 event_info = BatchNormalization( name = 'event_input_batchnorm' )(Input_event)
 jets = BatchNormalization( name = 'jet_input_batchnorm' )(Input_jet)
 leptons = BatchNormalization( name = 'lepton_input_batchnorm' )(Input_lepton)
 
-# CNN for jets
-#jets  = Conv2D(32, (2,2), padding='same', kernel_initializer='lecun_uniform',  activation='relu', name='jets_conv0')(jets)
-#jets  = Conv2D(32, (2,2), padding='same',  kernel_initializer='lecun_uniform',  activation='relu', name='jets_conv1')(jets)
-jets  = Conv1D(32, 1, kernel_initializer='lecun_uniform',  activation='relu', name='jets_conv0')(jets)
-jets  = Conv1D(32, 1, kernel_initializer='lecun_uniform',  activation='relu', name='jets_conv1')(jets)
-jets = LSTM(50, go_backwards=True, implementation=2, name='jets_lstm', return_sequences=True)(jets)
-#jets = LSTM(50, go_backwards=True, implementation=2, name='jets_lstm2', return_sequences=True)(jets)
+# CNN for event var
+event_info = Conv1D(32, 1, kernel_initializer='lecun_uniform', activation='relu', name='event')(event_info)
+event_info = LSTM(25, go_backwards=True, implementation=2, return_sequences=True)(event_info)
 
-## CNN for leptons
-#leptons  = Conv1D(32, 1, kernel_initializer='lecun_uniform',  activation='relu', name='leptons_conv0')(leptons)
-#leptons = LSTM(25, go_backwards=True, implementation=2, name='leptons_lstm', return_sequences=True)(leptons)
+# CNN for jets
+jets  = Conv1D(32, 1, kernel_initializer='lecun_uniform',  activation='relu', name='jets_conv0')(jets)
+jets  = Conv1D(32, 1,  kernel_initializer='lecun_uniform',  activation='relu', name='jets_conv1')(jets)
+jets = LSTM(50, go_backwards=True, implementation=2, name='jets_lstm', return_sequences=True)(jets)
+
+# CNN for leptons
+leptons  = Conv1D(32, 1, kernel_initializer='lecun_uniform',  activation='relu', name='leptons_conv0')(leptons)
+leptons = LSTM(25, go_backwards=True, implementation=2, name='leptons_lstm', return_sequences=True)(leptons)
 
 # Concatenate
 x = Concatenate()( [event_info, jets, leptons] )
@@ -139,23 +139,18 @@ epochs = 50
 model.compile( loss = 'categorical_crossentropy',optimizer = 'adam',metrics=['accuracy', 'categorical_accuracy'] )
 hist = model.fit( x = [train_event_input, train_jet_input, train_lepton_input], y = train_data_out, batch_size = batch_size, epochs = epochs, validation_data = ( [valid_event_input, valid_jet_input, valid_lepton_input], valid_data_out))
 
-#pre = model.predict(valid_data)
+#pred = model.predict(valid_data)
 pred = model.predict( [valid_event_input, valid_jet_input, valid_lepton_input])
-pred = pred.reshape( pred.shape[0], pred.shape[2] )
 pred = np.argmax(pred, axis=1)
-valid_data_out_reshape = valid_data_out.reshape( valid_data_out.shape[0], valid_data_out.shape[2] )
-comp = np.argmax(valid_data_out_reshape, axis=1)
+comp = np.argmax(valid_data_out, axis=1)
 
-print 'pred', pred
-print 'comp', comp
-val_result = pd.DataFrame({"real":comp, "pred":pred})#d event variables
-print 'result', val_result
+result = pd.DataFrame({"real":comp, "pred":pred})
 
 result_array = []
 correct = 0
 
 for i in range(n_cat):
-    result_real = val_result.loc[val_result['real']==i]
+    result_real = result.loc[result['real']==i]
     temp = [(len(result_real.loc[result_real["pred"]==j])) for j in range(n_cat)]
     result_array.append(temp)
     correct = correct + temp[i]
@@ -163,7 +158,7 @@ for i in range(n_cat):
 
 result_array_prob = []
 for i in range(n_cat):
-    result_real = val_result.loc[val_result['real']==i]
+    result_real = result.loc[result['real']==i]
     temp = [(len(result_real.loc[result_real["pred"]==j])) / len(result_real) for j in range(n_cat)]
     result_array_prob.append(temp)
     print temp, len(result_real), temp[i]
@@ -177,18 +172,11 @@ plt.plot(hist.history['val_loss'])
 plt.ylabel('Loss')
 plt.xlabel('Epochs')
 plt.legend(['Train','Test'],loc='upper right')
-#plt.savefig(os.path.join(resultDir,'Loss_pt20_weight_N'+str(node)+'L'+str(layer)+'E'+str(epochs)+'D'+str(dropout)+'.pdf'))
+plt.savefig(os.path.join(resultDir,'Loss_pt20_weight_N'+str(node)+'L'+str(layer)+'E'+str(epochs)+'D'+str(dropout)+'.pdf'))
 plt.gcf().clear()
 
 # Heatmap
-plt.rcParams['figure.figsize'] = [7.5, 6]
-cfmt = lambda x,pos: '{:.0%}'.format(x)
-heatmap = sns.heatmap(result_array_prob, annot=True, cmap='YlGnBu', fmt='.1%', annot_kws={"size":12}, vmax=1, cbar_kws={'format': FuncFormatter(cfmt)} )
-#plt.title('Heatmap', fontsize=15)
-plt.xlabel('pred.', fontsize=12)
-plt.ylabel('real', fontsize=12)
-heatmap.set_yticklabels(heatmap.get_yticklabels(), rotation=0)
-plt.show()
+
 
 
 

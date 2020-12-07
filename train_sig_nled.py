@@ -150,8 +150,8 @@ model.compile(loss=weighted_categorical_crossentropy(classweight),
 #model.compile(loss='categorical_crossentropy',
               optimizer = 'adam',
               metrics=['accuracy', 'categorical_accuracy'])
-#hist = model.fit(train_data1, train_data_out, batch_size=batch_size, epochs=epochs, validation_data=(valid_data,valid_data_out))
-hist = model.fit(train_data1, train_data_out, batch_size=batch_size, epochs=epochs, validation_data=(valid_data,valid_data_out), class_weight=classweight)
+hist = model.fit(train_data1, train_data_out, batch_size=batch_size, epochs=epochs, validation_data=(valid_data,valid_data_out))
+#hist = model.fit(train_data1, train_data_out, batch_size=batch_size, epochs=epochs, validation_data=(valid_data,valid_data_out), class_weight=classweight)
 
 model.summary()
 
@@ -163,11 +163,11 @@ print("RealTime={0:6.2f} seconds, CpuTime={1:6.2f} seconds").format(rtime,ctime)
 pred = model.predict(valid_data)
 
 
-print 'pred 1'
-print pred
+print 'just pred'
+print pred, pred.shape
 
 pred = np.argmax(pred, axis=1)
-print 'pred 2' 
+print 'argmax pred' 
 print pred
 comp = np.argmax(valid_data_out, axis=1)
 
